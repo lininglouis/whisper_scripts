@@ -43,19 +43,6 @@ install openai
 注释的三行代码，是使用方式2识别的，本地numpy有问题，还在debug
 '''
 
-openai.api_key = ""
-MODE = 'local'
-output_dir = 'subtitles'
-
-
-if MODE == 'local':  #是用本地的whisper模型识别。tiny,base,medium,large
-    model = whisper.load_model("base")
-elif MODE == 'remote':  #是远程调用openai的whisper服务识别, 
-    if not openai.api_key:
-        raise 'OPEN API KEY needed for remote call'
-    pass
-
-
 def extract_audio(video_path, output_path, force=True):
     output_path = str(output_path)
     if not force and os.path.exists(output_path):
@@ -82,6 +69,20 @@ def gen_subtitles(media_path, output_directory):
     srt_writer(transcript, media_path)
 
 
-os.makedirs(output_dir, exist_ok=True)
-gen_subtitles('gpt4audio.mp4', output_directory=output_dir)
+if __name__ == '__main__':
+
+    openai.api_key = ""
+    MODE = 'local'
+    output_dir = 'subtitles'
+
+
+    if MODE == 'local':  #是用本地的whisper模型识别。tiny,base,medium,large
+        model = whisper.load_model("base")
+    elif MODE == 'remote':  #是远程调用openai的whisper服务识别, 
+        if not openai.api_key:
+            raise ValueError('OPEN API KEY needed for remote call')
+        pass
+
+    os.makedirs(output_dir, exist_ok=True)
+    gen_subtitles('gpt4audio.mp4', output_directory=output_dir)
 ```
